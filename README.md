@@ -22,6 +22,6 @@ You should now be able to run the application using the command:
 
 ###Project Structure
 
-The _lib_ folder contains all the source code for the Pong application.
-The _spec_ folder contains all rspec tests.
-The _util_ folder contains anything that is interesting to keep, but not vital to the application.
+- The _lib_ folder contains all the source code for the Pong application.
+- The _spec_ folder contains all rspec tests.
+- The _util_ folder contains anything that is interesting to keep, but not vital to the application.
