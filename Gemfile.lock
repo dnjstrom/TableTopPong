@@ -1,7 +1,12 @@
 GEM
+  remote: https://rubygems.org/
   specs:
+    osc-ruby (1.1.0)
+    tuio-ruby (0.2.5)
+      osc-ruby (>= 0.6.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  tuio-ruby
