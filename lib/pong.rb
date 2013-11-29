@@ -9,6 +9,7 @@ require 'pong/game'
 module Pong
 	def self.start
 		game = Game.new
+		game.start
 	end
 end
 

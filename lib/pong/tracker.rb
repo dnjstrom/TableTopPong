@@ -2,9 +2,10 @@ require 'tuio-ruby'
 
 module Pong
 class Tracker
-	def initialize
+	def initialize(game)
 		@tc = TuioClient.new
 		@objects = Hash.new
+		@game = game
 
 		@tc.on_object_creation do | to |
 			@objects[to.fiducial_id] = TuioObject.new(to.x_pos, to.y_pos)

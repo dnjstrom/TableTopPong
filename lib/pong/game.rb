@@ -1,6 +1,7 @@
 require 'pong/ball'
 require 'pong/paddle'
 require 'pong/tracker'
+require 'pong/player'
 
 require 'vector'
 
@@ -9,76 +10,87 @@ class Game
 	WIDTH = 1000
 	HEIGHT = 800
 	HOME_WIDTH = 100
-	HOME_HEIGHT = HEIGHT
 
-	tracker = Tracker.new
+	def initialize
+		initTracker
 
-	paddle1 = Paddle.new(20, HEIGHT / 2, 0)
-	paddle2 = Paddle.new(WIDTH - 20, HEIGHT / 2, 0)
+		@paddles = {0 => Paddle.new(0), 1 => Paddle.new(1)}
 
-	ball = Ball.new(WIDTH / 2, HEIGHT / 2, 20, 5, 5)
+		@player1 = Player.new("Daniel", @paddles[0])
+		@player2 = Player.new("Isak", @paddles[1])
 
-	# Set identifier to paddle objects
-
-	loop do # Game loop
-		# Check input, use tracker
-		paddle1_new_position = 0
-		paddle2_new_position = 0
-
-		# Assure that the paddles are inside the home
-		insideHome(paddle1_new_position, paddle2_new_position);
-
-		# Move paddles
-		paddle1.setPosition(paddle1_new_position.getX, paddle1_new_position.getY)
-		paddle2.setPosition(paddle2_new_position.getX, paddle1_new_position.getY)
-
-		# Move ball
-		ball.move
-
-		# Check collisions
-
-		# Change ball direction
-		# Ball hits top or bottom wall
-		if ball.y < 0 || ball.y > HEIGHT
-			ball.direction.flipY
-		end
-
-		# Check score
-		if ball.x < 0
-			player1.increaseScore
-		elsif ball.x > WIDTH
-			player2.increaseScore
-		end
-
-		# Draw GUI
+		@ball = Ball.new(WIDTH / 2, HEIGHT / 2, 20, 15, 15)
 	end
 
-	def insideHome(paddle1_new_position, paddle2_new_position)
-		if paddle1_new_position.getX > HOME_WIDTH
-			paddle1_new_position.x = HOME_WIDTH
-		elsif paddle1_new_position.getX < 0
-			paddle1_new_position.x = 0
-		end
+	def start
+		@tc.start
 
-		if paddle1_new_position.getY > HEIGHT
-			paddle1_new_position.y = HEIGHT
-		elsif paddle1_new_position.getY < 0
-			paddle1_new_position.y = 0
-		end
+		nextTime = Time.now
 
-		if paddle2_new_position.getX < WIDTH - HOME_WIDTH
-			paddle2_new_position.x = WIDTH - HOME_WIDTH
-		elsif paddle2_new_position.getX > WIDTH
-			paddle2_new_position.x = WIDTH
-		end
+		loop do # Game loop
+			if Time.now > nextTime
+				nextTime = Time.now + 0.033 # 33 fps
 
-		if paddle2_new_position.getY > HEIGHT
-			paddle2_new_position.y = HEIGHT
-		elsif paddle2_new_position.getY < 0
-			paddle2_new_position.y = 0
+				# Move ball
+				@ball.move!
+
+				# Check collisions
+
+
+				# Ball hits top or bottom wall
+				if @ball.position.y < 0 || @ball.position.y > HEIGHT
+					@ball.direction.flipY
+				end
+
+				if @ball.position.x < 0 || @ball.position.x > WIDTH
+					@ball.direction.flipX
+				end
+
+				puts "x = #{@ball.position.x}, y = #{@ball.position.y}"
+
+				# Check score
+				# if @ball.x < 0
+				# 	@player1.score += 1
+				# elsif @ball.x > WIDTH
+				# 	@player2.score += 1
+				# end
+
+				# Draw GUI
+			end
 		end
 	end
 
-	private :insideHome
+private
+	def insideHome(paddle, from, to)
+		if paddle.position.x.between?(from, to) && paddle.position.y.between?(0, HEIGHT)
+			paddle.activate
+		else
+			paddle.deactivate
+		end
+	end
+
+	def initTracker
+		@tc = TuioClient.new
+
+		@tc.on_object_creation do | to |
+			@paddles[to.fiducial_id].activate
+		end
+
+		@tc.on_object_update do | to |
+			paddle = @paddles[to.fiducial_id]
+
+			if paddle == @player1.paddle
+				insideHome(paddle, 0, HOME_WIDTH)
+			else 
+				insideHome(paddle, WIDTH - HOME_WIDTH, WIDTH)
+			end
+
+			paddle.position.set(to.x_pos, to.y_pos)
+		end
+
+		@tc.on_object_removal do | to |
+			@paddles[to.fiducial_id].deactivate
+		end
+	end
 end
 end

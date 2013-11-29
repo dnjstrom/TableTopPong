@@ -1,20 +1,23 @@
+require 'vector'
+
 module Pong
 class Paddle
-	attr_accessor :x, :y, :rotation, :score
+	attr_accessor :id, :position, :angle, :active
 
-	def initialize(x, y, rotation)
-		setPosition(x, y)
-		@rotation = rotation
-		@score = 0
+	def initialize(id)
+		@id = id
+		@position = Vector.new
+		@angle = 0
+		@active = false
 	end
 
-	def increaseScore
-		@score += 1
+	def activate
+		@active = true
+		self
 	end
 
-	def setPosition(x, y)
-		@x = x
-		@y = y
+	def deactivate
+		@active = false
 	end
 end
 end
