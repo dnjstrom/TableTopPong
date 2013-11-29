@@ -1,6 +1,7 @@
-require './ball'
-require './paddle'
-require './tracker'
+require 'pong/ball'
+require 'pong/paddle'
+require 'pong/tracker'
+
 require 'vector'
 
 module Pong
