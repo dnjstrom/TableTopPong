@@ -5,3 +5,6 @@ gem 'tuio-ruby'
 
 # Simple and readable testing framework
 gem 'rspec'
+
+# The most awesome vector library ever
+gem 'vector', git: 'git@github.com:Aerivan/vector.git'

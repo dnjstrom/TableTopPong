@@ -1,3 +1,9 @@
+GIT
+  remote: git@github.com:Aerivan/vector.git
+  revision: 31fd90d9181e0f4e70a19eb2dc5266ff30c4fcc7
+  specs:
+    vector (0.1.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -20,3 +26,4 @@ PLATFORMS
 DEPENDENCIES
   rspec
   tuio-ruby
+  vector!
