@@ -1,11 +1,10 @@
 require 'vector'
 
 module Pong
-class Paddle
-	attr_accessor :id, :position, :angle, :active
+module Paddle
+	attr_accessor :position, :angle, :active
 
-	def initialize(id)
-		@id = id
+	def initialize()
 		@position = Vector.new
 		@angle = 0
 		@active = false
@@ -18,6 +17,7 @@ class Paddle
 
 	def deactivate
 		@active = false
+		self
 	end
 end
 end

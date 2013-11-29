@@ -1,7 +1,7 @@
 require 'pong/ball'
-require 'pong/paddle'
 require 'pong/tracker'
 require 'pong/player'
+require 'pong/rectangular_paddle'
 
 require 'vector'
 
@@ -14,7 +14,7 @@ class Game
 	def initialize
 		initTracker
 
-		@paddles = {0 => Paddle.new(0), 1 => Paddle.new(1)}
+		@paddles = {0 => RectangularPaddle.new(10, 40), 1 => RectangularPaddle.new(10, 40)}
 
 		@player1 = Player.new("Daniel", @paddles[0])
 		@player2 = Player.new("Isak", @paddles[1])
@@ -35,7 +35,7 @@ class Game
 				@ball.move!
 
 				# Check collisions
-
+				
 
 				# Ball hits top or bottom wall
 				if @ball.position.y < 0 || @ball.position.y > HEIGHT
