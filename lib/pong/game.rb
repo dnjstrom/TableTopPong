@@ -1,6 +1,7 @@
 require './ball'
 require './paddle'
 require './tracker'
+require 'vector'
 
 module Pong
 class Game
