@@ -10,6 +10,9 @@ Development
 
 ###Setup
 
+Make sure to install the latest reactivision:
+    [reacTIVisiion on SourceForge](http://sourceforge.net/projects/reactivision/files/reacTIVision/)
+
 Make sure you have bundler installed:
     gem install bundler
 
