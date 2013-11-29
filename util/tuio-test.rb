@@ -3,7 +3,7 @@ require 'tuio-ruby'
 @tc = TuioClient.new
 
 @tc.on_object_creation do | to |
-  puts "New TUIO Object at x: #{to.x_pos}, y: #{to.y_pos}"
+  puts "New TUIO Object #{to.fiducial_id} at x: #{to.x_pos}, y: #{to.y_pos}"
 end
 
 @tc.on_object_update do | to |
