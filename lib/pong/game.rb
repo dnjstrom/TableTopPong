@@ -20,7 +20,7 @@ class Game
 
 	# Set identifier to paddle objects
 
-	begin # Game loop
+	loop do # Game loop
 		# Check input, use tracker
 		paddle1_new_position = 0
 		paddle2_new_position = 0
@@ -40,7 +40,7 @@ class Game
 		# Change ball direction
 		# Ball hits top or bottom wall
 		if ball.y < 0 || ball.y > HEIGHT
-			ball.invertYDirection
+			ball.direction.flipY
 		end
 
 		# Check score
@@ -51,7 +51,7 @@ class Game
 		end
 
 		# Draw GUI
-	end until true
+	end
 
 	def insideHome(paddle1_new_position, paddle2_new_position)
 		if paddle1_new_position.getX > HOME_WIDTH
