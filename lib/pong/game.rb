@@ -1,5 +1,6 @@
-require 'ball'
-require 'paddle'
+require './ball'
+require './paddle'
+require './tracker'
 
 module Pong
 class Game
@@ -15,10 +16,8 @@ class Game
 
 	ball = Ball.new(WIDTH / 2, HEIGHT / 2, 20, 5, 5)
 
-	# Start tracker and identify blocks
 	# Set identifier to paddle objects
-	tracker.start
-	
+
 	begin # Game loop
 		# Check input, use tracker
 		paddle1_new_position = 0

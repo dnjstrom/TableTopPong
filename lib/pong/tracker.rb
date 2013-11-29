@@ -2,25 +2,25 @@ require 'tuio-ruby'
 
 module Pong
 class Tracker
-	@tc = TuioClient.new
-	@objects = Hash.new
+	def initialize
+		@tc = TuioClient.new
+		@objects = Hash.new
 
-	@tc.on_object_creation do | to |
-		@objects[to.fiducial_id] = TuioObject.new(to.x_pos, to.y_pos)
-	 	puts "New TUIO Object #{to.fiducial_id} at x: #{to.x_pos}, y: #{to.y_pos}"
-	end
+		@tc.on_object_creation do | to |
+			@objects[to.fiducial_id] = TuioObject.new(to.x_pos, to.y_pos)
+		 	puts "New TUIO Object #{to.fiducial_id} at x: #{to.x_pos}, y: #{to.y_pos}"
+		end
 
-	@tc.on_object_update do | to |
-		tuiObject = @objects[to.fiducial_id]
-		tuiObject.updatePosition(to.x_pos, to.y_pos)
-	  	puts "Updated TUIO Object #{to.fiducial_id} at x: #{to.x_pos}, y: #{to.y_pos}"
-	end
+		@tc.on_object_update do | to |
+			tuiObject = @objects[to.fiducial_id]
+			tuiObject.updatePosition(to.x_pos, to.y_pos)
+		  	puts "Updated TUIO Object #{to.fiducial_id} at x: #{to.x_pos}, y: #{to.y_pos}"
+		end
 
-	@tc.on_object_removal do | to |
-		puts "Removed TUIO Object #{to.fiducial_id}"
-	end
+		@tc.on_object_removal do | to |
+			puts "Removed TUIO Object #{to.fiducial_id}"
+		end
 
-	def start
 		@tc.start
 		sleep
 	end
