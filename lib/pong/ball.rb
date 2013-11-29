@@ -1,35 +1,17 @@
+require 'vector'
+
 module Pong
 class Ball
-	attr_accessor :x, :y, :radius, :dx, :dy
+	attr_accessor :position, :radius, :direction
 
 	def initialize(x, y, radius, dx, dy)
-		setPosition(x, y)
+		@position = Vector.new(x, y)
 		@radius = radius
-		setDirection(dx, dy)
-	end
-
-	def setDirection(dx, dy)
-		@dx = dx
-		@dy = dy
-	end
-
-	def invertYDirection()
-		@dy *= -1
-	end
-
-	def invertXDirection()
-		@dx *= -1
+		@direction = Vector.new(dx, dy)
 	end
 
 	def move
-		setPosition(x + dx, y + dy)
+		@position.add!(@direction.x, @direction.y)
 	end
-
-	def setPosition(x, y)
-		@x = x
-		@y = y
-	end
-
-	private :setPosition, :setDirection
 end
 end
