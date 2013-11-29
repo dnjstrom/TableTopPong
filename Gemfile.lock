@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:Aerivan/vector.git
-  revision: 31fd90d9181e0f4e70a19eb2dc5266ff30c4fcc7
+  revision: abee891066d8dd8d3f8396f14265a2ad9cf2d5ad
   specs:
     vector (0.1.1)
 
