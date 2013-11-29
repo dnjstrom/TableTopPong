@@ -17,7 +17,8 @@ class Game
 
 	# Start tracker and identify blocks
 	# Set identifier to paddle objects
-
+	tracker.start
+	
 	begin # Game loop
 		# Check input, use tracker
 		paddle1_new_position = 0
