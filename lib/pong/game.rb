@@ -10,38 +10,46 @@ require 'gosu'
 require 'chipmunk'
 
 module Pong
+	Vec2 = CP::Vec2
+
 class Game < Gosu::Window
-	attr_reader :WIDTH, :HEIGHT, :HOME_WIDTH
+	attr_reader :WIDTH, :HEIGHT, :HOME_WIDTH, :space
 
 
 	def initialize
 		@WIDTH = 640
 		@HEIGHT = 360
 		@HOME_WIDTH = 100
+
 		super @WIDTH, @HEIGHT, false
 
 		initTracker
-		
+
 		self.caption = "TableTop Pong"
 
-		@paddles = {0 => RectangularPaddle.new(10, 40), 1 => RectangularPaddle.new(10, 40)}
+		# Time increment over which to apply a physics step
+    @dt = (1.0/60.0)
 
-		@player1 = Player.new("Daniel", @paddles[0])
-		@player2 = Player.new("Isak", @paddles[1])
+		#@paddles = {0 => RectangularPaddle.new(10, 40), 1 => RectangularPaddle.new(10, 40)}
+
+		#@player1 = Player.new("Daniel", @paddles[0])
+		#@player2 = Player.new("Isak", @paddles[1])
 
 		#@ball = Ball.new(@WIDTH / 2, @HEIGHT / 2, 20, 15, 15)
 
-		@ball = Ball.new(self)
-    @ball.warp(320, 240)
+		@space = CP::Space.new
+    @space.gravity = Vec2.new(0.0, 0.0)
+
+		@ball = Ball.new self
+    @ball.warp 200, 100
+
+    @paddle = RectangularPaddle.new self
 	end
 
 	def update
 		# Move ball
+		@space.step(@dt)
 		@ball.move
-
-		# Check collisions
-		
-
 
 		#puts "x = #{@ball.position.x}, y = #{@ball.position.y}"
 
@@ -57,6 +65,7 @@ class Game < Gosu::Window
 
 	def draw
 		@ball.draw
+		@paddle.draw
 	end
 
 	def start

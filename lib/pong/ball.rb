@@ -11,8 +11,20 @@ class Ball
 		@window = window
 		@image = Gosu::Image.new(window, "media/img/ball.png", false)
 
-		@x = @y = 0.0
-		@vel_x = @vel_y = 4
+		space = window.space
+
+    @body = CP::Body.new(1, CP::INFINITY)
+    @body.object = self
+    @body.p = CP::Vec2.new(0, 0)
+    @body.v = CP::Vec2.new(400, 200)
+    #@body.v_limit = 500
+    shape = CP::Shape::Circle.new(@body, @@radius, CP::Vec2.new(0.0,0.0))
+    shape.u = 0.0 # friction coefficient
+    shape.e = 1.0 # elasticity
+    #shape.collision_type = :player
+
+    space.add_body(@body)
+    space.add_shape(shape)
 	end
 
 	def self.radius
@@ -20,25 +32,25 @@ class Ball
 	end
 
 	def warp(x, y)
-    @x, @y = x, y
+    @body.p.x, @body.p.y = x, y
   end
 
 	def move
-    @x += @vel_x
-    @y += @vel_y
+    #@body.p.x += @body.v.x
+    #@body.p.y += @body.v.y
 
 		# Ball hits top or bottom wall
-		if @y < @@radius || @y > (@window.HEIGHT - @@radius)
-			@vel_y *= -1
+		if @body.p.y < @@radius || @body.p.y > (@window.HEIGHT - @@radius)
+			@body.v.y *= -1
 		end
 
-		if @x < @@radius || @x > (@window.WIDTH - @@radius)
-			@vel_x *= -1
+		if @body.p.x < @@radius || @body.p.x > (@window.WIDTH - @@radius)
+			@body.v.x *= -1
 		end
   end
 
   def draw
-    @image.draw_rot(@x, @y, 1, 0)
+    @image.draw_rot(@body.p.x, @body.p.y, 1, @body.a)
   end
 end
 end
