@@ -2,16 +2,43 @@ require 'vector'
 
 module Pong
 class Ball
-	attr_accessor :position, :radius, :direction
+	attr_accessor :x, :y, :vel_x, :vel_y
+	attr_reader :radius
 
-	def initialize(x, y, radius, dx, dy)
-		@position = Vector.new(x, y)
-		@radius = radius
-		@direction = Vector.new(dx, dy)
+	@@radius = 35
+
+	def initialize(window)
+		@window = window
+		@image = Gosu::Image.new(window, "media/img/ball.png", false)
+
+		@x = @y = 0.0
+		@vel_x = @vel_y = 4
 	end
+
+	def self.radius
+		@@radius
+	end
+
+	def warp(x, y)
+    @x, @y = x, y
+  end
 
 	def move
-		@position.add!(@direction.x, @direction.y)
-	end
+    @x += @vel_x
+    @y += @vel_y
+
+		# Ball hits top or bottom wall
+		if @y < @@radius || @y > (@window.HEIGHT - @@radius)
+			@vel_y *= -1
+		end
+
+		if @x < @@radius || @x > (@window.WIDTH - @@radius)
+			@vel_x *= -1
+		end
+  end
+
+  def draw
+    @image.draw_rot(@x, @y, 1, 0)
+  end
 end
 end

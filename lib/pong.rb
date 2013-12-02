@@ -13,4 +13,4 @@ module Pong
 	end
 end
 
-#Pong::start
+Pong::start

@@ -8,3 +8,6 @@ gem 'rspec'
 
 # The most awesome vector library ever
 gem 'vector', git: 'git@github.com:Aerivan/vector.git'
+
+gem 'gosu'
+gem 'chipmunk'
