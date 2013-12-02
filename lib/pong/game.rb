@@ -50,6 +50,7 @@ class Game < Gosu::Window
 		# Move ball
 		@space.step(@dt)
 		@ball.move
+		@paddle.update(mouse_x, mouse_y)
 
 		#puts "x = #{@ball.position.x}, y = #{@ball.position.y}"
 

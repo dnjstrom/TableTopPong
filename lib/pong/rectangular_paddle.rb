@@ -37,5 +37,10 @@ class RectangularPaddle
 	def draw
     @image.draw_rot(@body.p.x, @body.p.y, 1, @body.a)
 	end
+
+  def update(x, y)
+    @body.p.x = x
+    @body.p.y = y
+  end
 end
 end
