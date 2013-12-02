@@ -2,13 +2,9 @@ require 'vector'
 
 module Pong
 module Paddle
-	attr_accessor :position, :angle, :active
-
-	def initialize()
-		@position = Vector.new
-		@angle = 0
-		@active = false
-	end
+	@position = Vector.new
+	@angle = 0
+	@active = false
 
 	def activate
 		@active = true

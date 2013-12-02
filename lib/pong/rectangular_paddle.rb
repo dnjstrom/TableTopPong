@@ -1,15 +1,16 @@
 require 'pong/paddle'
 
 module Pong
-class RectangularPaddle < Paddle
+class RectangularPaddle
 	include Paddle
 
-	attr_accessor :width, :height
+	attr_accessor :width, :height, :active
 
-	def initialize(width, height = width)
+	def initialize(width, height)
+		height = width if height == nil
+
 		@width = width
 		@height = height
-		super
 	end
 end
 end

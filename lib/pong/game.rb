@@ -32,7 +32,7 @@ class Game
 				nextTime = Time.now + 0.033 # 33 fps
 
 				# Move ball
-				@ball.move!
+				@ball.move
 
 				# Check collisions
 				

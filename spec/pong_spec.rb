@@ -1,4 +1,4 @@
-require 'pong'
+require 'spec_helper'
 require 'vector'
 
 describe Pong do

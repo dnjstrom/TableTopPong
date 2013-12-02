@@ -10,7 +10,7 @@ class Ball
 		@direction = Vector.new(dx, dy)
 	end
 
-	def move!
+	def move
 		@position.add!(@direction.x, @direction.y)
 	end
 end
