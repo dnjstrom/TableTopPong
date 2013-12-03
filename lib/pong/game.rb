@@ -1,7 +1,7 @@
 require 'pong/ball'
 require 'pong/player'
 require 'pong/rectangular_paddle'
-
+require 'pong/database'
 
 require 'tuio-ruby'
 require 'rbconfig'
@@ -53,6 +53,8 @@ class Game < Gosu::Window
 		@paddle_last_moved = 0
 
 		initTracker
+		
+    db = Database.new
 	end
 
 	def update

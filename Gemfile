@@ -11,3 +11,5 @@ gem 'vector', git: 'git@github.com:Aerivan/vector.git'
 
 gem 'gosu'
 gem 'chipmunk'
+
+gem 'sqlite3'
