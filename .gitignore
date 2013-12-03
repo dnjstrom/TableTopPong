@@ -17,3 +17,6 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+*.db
+.fuse_hidden*

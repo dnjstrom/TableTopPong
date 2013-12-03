@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 unless $LOAD_PATH.include?(File.expand_path(File.dirname(__FILE__)))
   $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__)))
 end
@@ -13,4 +14,7 @@ module Pong
 	end
 end
 
-Pong::start
+# Only start the game when loaded from command line
+if $0 == __FILE__
+	Pong::start
+end
