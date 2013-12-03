@@ -22,6 +22,11 @@ class Game < Gosu::Window
 		@HOME_WIDTH = 100
 		@config_state = 0
 
+		#Initial cam configuration
+		@cam_left = @cam_top = 1
+		@cam_right = @cam_bottom = 0
+		@cam_x = @cam_y = 0
+
 		super @WIDTH, @HEIGHT, false
 
 		initTracker
@@ -44,6 +49,8 @@ class Game < Gosu::Window
 
 		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
 								1 => RectangularPaddle.new(self).warp(-100, -100)}
+
+		@paddle_last_moved = 0
 
     #@paddle = RectangularPaddle.new self
 
@@ -77,26 +84,39 @@ class Game < Gosu::Window
 		self.show
 	end
 
-	def button_down(id)
-    if id == Gosu::KbEscape
-      close
-    elsif Gosu::KbReturn
+	def stop
+		@tc.stop
+	end
 
+	def button_down(id)
+		case id
+		when Gosu::KbEscape
+      close
+		when Gosu::KbReturn
     	case @config_state
     	when 0 
     		puts "Put your marker in the right-most position and hit enter."
     	when 1 
+    		@cam_right = @cam_x
     		puts "Put your marker in the left-most position and hit enter."
     	when 2 
+    		@cam_left = @cam_x
     		puts "Put your marker in the top-most position and hit enter."
     	when 3 
+    		@cam_top = @cam_y
     		puts "Put your marker in the bottom-most position and hit enter."
     	when 4 
-    		puts "Configuration done"
-    	end
+    		@cam_bottom = @cam_y
 
+    		puts "Configuration done"
+    		puts "=================="
+    		puts "Top: #{@cam_top}"
+    		puts "Right: #{@cam_right}"
+    		puts "Bottom: #{@cam_bottom}"
+    		puts "Left: #{@cam_left}"
+    	end
     	@config_state = (@config_state + 1) % 5
-    end
+		end
   end
 
 private
@@ -124,8 +144,19 @@ private
 			#	insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
 			#end
 
-			puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-			paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) if paddle
+			if paddle
+
+				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
+				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
+
+				paddle.warp(x, y)
+
+				puts "Cam: #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
+				puts "Paddle #{to.fiducial_id}: x=#{x} y=#{y}"
+
+				@cam_x = to.x_pos
+				@cam_y = to.y_pos
+			end
 		end
 
 		@tc.on_object_removal do | to |
@@ -133,8 +164,8 @@ private
 		end
 	end
 
-	def convert_range(from_min, from_max, to_min, to_max)
-		ratio = from_min / from_max
+	def convert_range(value, from_min, from_max, to_min, to_max)
+		ratio = (value - from_min) / (from_max - from_min).to_f
 		to_min + (to_max - to_min) * ratio
 	end
 end
