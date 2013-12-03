@@ -31,7 +31,6 @@ class Game < Gosu::Window
 		@HOME_COLOR_RED = Gosu::Color.new(255,255,0,0)
 		@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
 		@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
->>>>>>> player
 
 		super @WIDTH, @HEIGHT, false
 
