@@ -1,5 +1,6 @@
 module Pong
 class RectangularPaddle
+  attr_reader :active
 
   @@WIDTH = 30
   @@HEIGHT = 100
@@ -9,6 +10,7 @@ class RectangularPaddle
     @image = Gosu::Image.new(window, "media/img/rectangular_paddle.png", false)
 
     space = window.space
+    @active = false
 
     # bottom wall
 
@@ -23,17 +25,17 @@ class RectangularPaddle
 
      CP::recenter_poly(verts)
 
-     shape = CP::Shape::Poly.new(@body, verts, CP::Vec2.new(0,0))
-
+     @shape = CP::Shape::Poly.new(@body, verts, CP::Vec2.new(0,0))
+     @shape.layers = 2
     #shape = CP::Shape::Circle.new(@body, 35, CP::Vec2.new(0.0,0.0))
-    shape.u = 0.0 # friction coefficient
-    shape.e = 1.0 # elasticity
+    @shape.u = 0.0 # friction coefficient
+    @shape.e = 1.0 # elasticity
 
-    shape.collision_type = :paddle
+    @shape.collision_type = :paddle
 
     space.add_collision_func(:paddle, :paddle, &nil)
     space.add_body(@body)
-    space.add_shape(shape)
+    space.add_shape(@shape)
   end
 
   def draw
@@ -44,6 +46,22 @@ class RectangularPaddle
     @body.p.x = x
     @body.p.y = y
     self
+  end
+
+  def activate
+    @active = true
+    @shape.layers = CP::ALL_LAYERS
+    self
+  end  
+
+  def deactivate
+    @active = false
+    @shape.layers = 2
+    self
+  end  
+
+  def pos
+    @body.p
   end
 end
 end
