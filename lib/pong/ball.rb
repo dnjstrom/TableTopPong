@@ -36,16 +36,21 @@ class Ball
   end
 
 	def move
-    #@body.p.x += @body.v.x
-    #@body.p.y += @body.v.y
-
 		# Ball hits top or bottom wall
-		if @body.p.y < @@radius || @body.p.y > (@window.HEIGHT - @@radius)
-			@body.v.y *= -1
+		if @body.p.y < @@radius
+			@body.v.y = @body.v.y.abs
 		end
 
-		if @body.p.x < @@radius || @body.p.x > (@window.WIDTH - @@radius)
-			@body.v.x *= -1
+		if @body.p.y > (@window.HEIGHT - @@radius)
+			@body.v.y = -@body.v.y.abs
+		end
+
+		if @body.p.x < @@radius 
+			@body.v.x = @body.v.x.abs
+		end
+
+		if @body.p.x > (@window.WIDTH - @@radius)
+			@body.v.x = - @body.v.x.abs
 		end
   end
 
