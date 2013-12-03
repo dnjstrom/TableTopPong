@@ -20,6 +20,7 @@ class Game < Gosu::Window
 		@WIDTH = 640
 		@HEIGHT = 360
 		@HOME_WIDTH = 100
+		@config_state = 0
 
 		super @WIDTH, @HEIGHT, false
 
@@ -29,8 +30,6 @@ class Game < Gosu::Window
 
 		# Time increment over which to apply a physics step
     @dt = (1.0/60.0)
-
-		#@paddles = {0 => RectangularPaddle.new(10, 40), 1 => RectangularPaddle.new(10, 40)}
 
 		#@player1 = Player.new("Daniel", @paddles[0])
 		#@player2 = Player.new("Isak", @paddles[1])
@@ -43,14 +42,18 @@ class Game < Gosu::Window
 		@ball = Ball.new self
     @ball.warp 200, 100
 
-    @paddle = RectangularPaddle.new self
+		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
+								1 => RectangularPaddle.new(self).warp(-100, -100)}
+
+    #@paddle = RectangularPaddle.new self
+
 	end
 
 	def update
 		# Move ball
 		@space.step(@dt)
 		@ball.move
-		@paddle.update(mouse_x, mouse_y)
+		#@paddle.warp(mouse_x, mouse_y)
 
 		#puts "x = #{@ball.position.x}, y = #{@ball.position.y}"
 
@@ -66,7 +69,7 @@ class Game < Gosu::Window
 
 	def draw
 		@ball.draw
-		@paddle.draw
+		@paddles.each { |id, paddle| paddle.draw }
 	end
 
 	def start
@@ -77,6 +80,22 @@ class Game < Gosu::Window
 	def button_down(id)
     if id == Gosu::KbEscape
       close
+    elsif Gosu::KbReturn
+
+    	case @config_state
+    	when 0 
+    		puts "Put your marker in the right-most position and hit enter."
+    	when 1 
+    		puts "Put your marker in the left-most position and hit enter."
+    	when 2 
+    		puts "Put your marker in the top-most position and hit enter."
+    	when 3 
+    		puts "Put your marker in the bottom-most position and hit enter."
+    	when 4 
+    		puts "Configuration done"
+    	end
+
+    	@config_state = (@config_state + 1) % 5
     end
   end
 
@@ -93,24 +112,30 @@ private
 		@tc = TuioClient.new
 
 		@tc.on_object_creation do | to |
-			@paddles[to.fiducial_id].activate
+			#@paddles[to.fiducial_id].activate
 		end
 
 		@tc.on_object_update do | to |
 			paddle = @paddles[to.fiducial_id]
 
-			if paddle == @player1.paddle
-				insideHome(paddle, 0, @HOME_WIDTH)
-			else 
-				insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
-			end
+			#if paddle == @player1.paddle
+			#	insideHome(paddle, 0, @HOME_WIDTH)
+			#else 
+			#	insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
+			#end
 
-			paddle.position.set(to.x_pos, to.y_pos)
+			puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
+			paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) if paddle
 		end
 
 		@tc.on_object_removal do | to |
-			@paddles[to.fiducial_id].deactivate
+			#@paddles[to.fiducial_id].deactivate
 		end
+	end
+
+	def convert_range(from_min, from_max, to_min, to_max)
+		ratio = from_min / from_max
+		to_min + (to_max - to_min) * ratio
 	end
 end
 end
