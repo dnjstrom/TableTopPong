@@ -88,8 +88,8 @@ class Game < Gosu::Window
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
-		@font.draw(@info_first, 10, 10, 100, 1.0, 1.0, 0xffffffff)
-		@font.draw(@info_second, 10, 30, 100, 1.0, 1.0, 0xffffffff)
+		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
+		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
 	end
 
 	def start
