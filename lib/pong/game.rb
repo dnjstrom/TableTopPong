@@ -16,6 +16,7 @@ class Game < Gosu::Window
 
 
 	def initialize
+
     db = Database.new
     @main = db.connect :main
     @config = db.connect :config
@@ -23,6 +24,14 @@ class Game < Gosu::Window
 		@WIDTH = @config.get :window_width, 640
 		@HEIGHT = @config.get :window_height, 360
 		@HOME_WIDTH = @config.get :home_width, 150
+
+		@config_state = 0
+
+		@HOME_COLOR_GREEN = Gosu::Color.new(255,45,240,65)
+		@HOME_COLOR_RED = Gosu::Color.new(255,255,0,0)
+		@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
+		@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
+>>>>>>> player
 
 		super @WIDTH, @HEIGHT, false
 
@@ -88,8 +97,20 @@ class Game < Gosu::Window
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
+
 		@font.draw(@info_first, 10, 10, 100, 1.0, 1.0, 0xffffffff)
 		@font.draw(@info_second, 10, 30, 100, 1.0, 1.0, 0xffffffff)
+
+		draw_quad(0, 0, @PLAYER1_CURRENT_COLOR, 
+							@HOME_WIDTH, 0, @PLAYER1_CURRENT_COLOR, 
+							0, @HEIGHT, @PLAYER1_CURRENT_COLOR, 
+							@HOME_WIDTH, @HEIGHT, @PLAYER1_CURRENT_COLOR,
+							0)
+		draw_quad(@WIDTH - @HOME_WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH - @HOME_WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR,
+							0)
 	end
 
 	def start
@@ -145,13 +166,15 @@ private
 		else
 			paddle.deactivate
 		end
+
+		paddle.active
 	end
 
 	def initTracker
 		@tc = TuioClient.new
 
 		@tc.on_object_creation do | to |
-		#	@paddles[to.fiducial_id].activate
+			@paddles[to.fiducial_id].activate
 		end
 
 		@tc.on_object_update do | to |
@@ -159,15 +182,21 @@ private
 
 			if paddle
 				if paddle == @player1.paddle
-					insideHome(paddle, 0, @HOME_WIDTH)
+					if insideHome(paddle, 0, @HOME_WIDTH) 
+						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
+					else
+						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_RED
+					end
 				else 
-					insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
+					if insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
+						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
+					else
+						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_RED
+					end
 				end
 				puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
 				paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) 
-			end
 
-			if paddle
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
@@ -178,14 +207,16 @@ private
 				else
 					@info_second = ""
 				end
-
+				
 				@cam_x = to.x_pos
 				@cam_y = to.y_pos
+
 			end
 		end
 
 		@tc.on_object_removal do | to |
-			#@paddles[to.fiducial_id].deactivate
+			@paddles[to.fiducial_id].deactivate
+
 		end
 	end
 
