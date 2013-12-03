@@ -21,12 +21,17 @@ class Game < Gosu::Window
 		@HOME_WIDTH = 150
 		@config_state = 0
 
+		super @WIDTH, @HEIGHT, false
+
 		#Initial cam configuration
 		@cam_left = @cam_top = 1
 		@cam_right = @cam_bottom = 0
 		@cam_x = @cam_y = 0
 
-		super @WIDTH, @HEIGHT, false
+		@config_state = 0
+
+		@info = ""
+    @font = Gosu::Font.new(self, Gosu::default_font_name, 20)
 
 		self.caption = "TableTop Pong"
 
@@ -74,6 +79,7 @@ class Game < Gosu::Window
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
+		@font.draw(@info, 10, 10, 100, 1.0, 1.0, 0xffffffff)
 	end
 
 	def start
@@ -92,25 +98,19 @@ class Game < Gosu::Window
 		when Gosu::KbReturn
     	case @config_state
     	when 0 
-    		puts "Put your marker in the right-most position and hit enter."
+    		@info = "Put your marker in the right-most position and hit enter."
     	when 1 
     		@cam_right = @cam_x
-    		puts "Put your marker in the left-most position and hit enter."
+    		@info = "Put your marker in the left-most position and hit enter."
     	when 2 
     		@cam_left = @cam_x
-    		puts "Put your marker in the top-most position and hit enter."
+    		@info = "Put your marker in the top-most position and hit enter."
     	when 3 
     		@cam_top = @cam_y
-    		puts "Put your marker in the bottom-most position and hit enter."
+    		@info = "Put your marker in the bottom-most position and hit enter."
     	when 4 
     		@cam_bottom = @cam_y
-
-    		puts "Configuration done"
-    		puts "=================="
-    		puts "Top: #{@cam_top}"
-    		puts "Right: #{@cam_right}"
-    		puts "Bottom: #{@cam_bottom}"
-    		puts "Left: #{@cam_left}"
+    		@info = ""
     	end
     	@config_state = (@config_state + 1) % 5
 		end
@@ -152,8 +152,8 @@ private
 
 				paddle.warp(x, y)
 
-				puts "Cam: #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-				puts "Paddle #{to.fiducial_id}: x=#{x} y=#{y}"
+				#puts "Cam: #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
+				#puts "Paddle #{to.fiducial_id}: x=#{x} y=#{y}"
 
 				@cam_x = to.x_pos
 				@cam_y = to.y_pos
