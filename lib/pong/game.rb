@@ -30,8 +30,6 @@ class Game < Gosu::Window
 		# Time increment over which to apply a physics step
     @dt = (1.0/60.0)
 
-		#@ball = Ball.new(@WIDTH / 2, @HEIGHT / 2, 20, 15, 15)
-
 		@space = CP::Space.new
     @space.gravity = Vec2.new(0.0, 0.0)
     @text = Gosu::Font.new(self, Gosu::default_font_name, 20)
@@ -43,9 +41,6 @@ class Game < Gosu::Window
 
 		@player1 = Player.new("Daniel", @paddles[0])
 		@player2 = Player.new("Isak", @paddles[1])
-
-    #@paddle = RectangularPaddle.new self
-
 	end
 
 	def update
@@ -55,16 +50,6 @@ class Game < Gosu::Window
 		#@paddles.each { |id, paddle| paddle.warp(mouse_x, mouse_y)}
 		@paddles[0].warp(mouse_x, mouse_y)
 		insideHome(@paddles[0], 0, @HOME_WIDTH)
-
-		# if(@paddles[0].active)
-		# 	@paddles[0].layers = CP::ALL_LAYERS
-		# else
-		# 	@paddles[0].layers = 2
-		# end
-
-		#@paddle.warp(mouse_x, mouse_y)
-
-		#puts "x = #{@ball.position.x}, y = #{@ball.position.y}"
 
 		#Check score
 		if @ball.p.x < 0

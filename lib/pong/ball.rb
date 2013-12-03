@@ -1,6 +1,5 @@
 module Pong
 class Ball
-	#attr_accessor :x, :y, :vel_x, :vel_y
 	attr_reader :radius
 
 	@@radius = 35
@@ -14,12 +13,10 @@ class Ball
     @body = CP::Body.new(1, CP::INFINITY)
     @body.object = self
     reset
-    #@body.v_limit = 500
     shape = CP::Shape::Circle.new(@body, @@radius, CP::Vec2.new(0.0,0.0))
     shape.u = 0.0 # friction coefficient
     shape.e = 1.0 # elasticity
     shape.layers = 1
-    #shape.collision_type = :player
 
     space.add_body(@body)
     space.add_shape(shape)
@@ -46,14 +43,6 @@ class Ball
 		if @body.p.y > (@window.HEIGHT - @@radius)
 			@body.v.y = -@body.v.y.abs
 		end
-
-		# if @body.p.x < @@radius 
-		# 	@body.v.x = @body.v.x.abs
-		# end
-
-		# if @body.p.x > (@window.WIDTH - @@radius)
-		# 	@body.v.x = - @body.v.x.abs
-		# end
   end
 
   def draw

@@ -12,13 +12,10 @@ class RectangularPaddle
     space = window.space
     @active = false
 
-    # bottom wall
-
     @body = CP::Body.new(CP::INFINITY, CP::INFINITY)
-    @body.object = self # user-defined object is this Player
+    @body.object = self
     @body.p = Vec2.new(0, 0)
     @body.v_limit = 0
-    #shape = CP::Shape::Segment.new(@body, CP::Vec2.new(@body.p.x, @body.p.y - (@@HEIGHT/2)), CP::Vec2.new(@body.p.x, @body.p.y + (@@HEIGHT/2)), @@WIDTH)
 
     verts = [CP::Vec2.new(0,@@HEIGHT), CP::Vec2.new(@@WIDTH,@@HEIGHT),
      CP::Vec2.new(@@WIDTH,0), CP::Vec2.new(0,0) ]
@@ -27,7 +24,6 @@ class RectangularPaddle
 
      @shape = CP::Shape::Poly.new(@body, verts, CP::Vec2.new(0,0))
      @shape.layers = 2
-    #shape = CP::Shape::Circle.new(@body, 35, CP::Vec2.new(0.0,0.0))
     @shape.u = 0.0 # friction coefficient
     @shape.e = 1.0 # elasticity
 
