@@ -20,6 +20,10 @@ class Game < Gosu::Window
 		@HEIGHT = 360
 		@HOME_WIDTH = 150
 		@config_state = 0
+		@HOME_COLOR_GREEN = Gosu::Color.new(255,45,240,65)
+		@HOME_COLOR_RED = Gosu::Color.new(255,255,0,0)
+		@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
+		@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
 
 		super @WIDTH, @HEIGHT, false
 
@@ -67,6 +71,17 @@ class Game < Gosu::Window
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
+		
+		draw_quad(0, 0, @PLAYER1_CURRENT_COLOR, 
+							@HOME_WIDTH, 0, @PLAYER1_CURRENT_COLOR, 
+							0, @HEIGHT, @PLAYER1_CURRENT_COLOR, 
+							@HOME_WIDTH, @HEIGHT, @PLAYER1_CURRENT_COLOR,
+							0)
+		draw_quad(@WIDTH - @HOME_WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH - @HOME_WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR, 
+							@WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR,
+							0)
 	end
 
 	def start
@@ -103,31 +118,42 @@ private
 		else
 			paddle.deactivate
 		end
+
+		paddle.active
 	end
 
 	def initTracker
-	# 	@tc = TuioClient.new
+		@tc = TuioClient.new
 
-	# 	@tc.on_object_creation do | to |
-	# 		#@paddles[to.fiducial_id].activate
-	# 	end
+		@tc.on_object_creation do | to |
+			@paddles[to.fiducial_id].activate
+		end
+		@tc.on_object_update do | to |
+			paddle = @paddles[to.fiducial_id]
 
-	# 	@tc.on_object_update do | to |
-	# 		paddle = @paddles[to.fiducial_id]
+			if paddle
+				if paddle == @player1.paddle
+					if insideHome(paddle, 0, @HOME_WIDTH) 
+						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
+					else
+						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_RED
+					end
+				else 
+					if insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
+						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
+					else
+						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_RED
+					end
+				end
+				puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
+				paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) 
+			end
+		end
 
-	# 		#if paddle == @player1.paddle
-	# 		#	insideHome(paddle, 0, @HOME_WIDTH)
-	# 		#else 
-	# 		#	insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
-	# 		#end
 
-	# 		puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-	# 		paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) if paddle
-	# 	end
-
-	# 	@tc.on_object_removal do | to |
-	# 		#@paddles[to.fiducial_id].deactivate
-	# 	end
+		@tc.on_object_removal do | to |
+			@paddles[to.fiducial_id].deactivate
+		end
 	end
 
 	def convert_range(from_min, from_max, to_min, to_max)
