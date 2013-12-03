@@ -47,6 +47,7 @@ class Database
 
 		def set(key, value)
 			@db.execute "insert or replace into #{@name} values ( ?, ?, ?)", key.to_s, value.to_s, value.class.to_s
+			value
 		end
 	end
 
