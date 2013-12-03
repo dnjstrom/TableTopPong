@@ -7,5 +7,6 @@ class Player
 		@score = score
 		@paddle = paddle
 	end
+
 end
 end
