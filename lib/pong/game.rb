@@ -16,21 +16,28 @@ class Game < Gosu::Window
 
 
 	def initialize
-		@WIDTH = 640
-		@HEIGHT = 360
-		@HOME_WIDTH = 150
-		@config_state = 0
+    db = Database.new
+    @main = db.connect :main
+    @config = db.connect :config
+
+		@WIDTH = @config.get :window_width, 640
+		@HEIGHT = @config.get :window_height, 360
+		@HOME_WIDTH = @config.get :home_width, 150
 
 		super @WIDTH, @HEIGHT, false
 
 		#Initial cam configuration
-		@cam_left = @cam_top = 1
-		@cam_right = @cam_bottom = 0
+		@cam_left = @config.get :cam_left, 1
+		@cam_top = @config.get :cam_top, 1
+		@cam_right = @config.get :cam_right, 0
+		@cam_bottom = @config.get :cam_bottom, 0
+
 		@cam_x = @cam_y = 0
 
 		@config_state = 0
 
-		@info = ""
+		@info_first = ""
+		@info_second = ""
     @font = Gosu::Font.new(self, Gosu::default_font_name, 20)
 
 		self.caption = "TableTop Pong"
@@ -81,7 +88,8 @@ class Game < Gosu::Window
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
-		@font.draw(@info, 10, 10, 100, 1.0, 1.0, 0xffffffff)
+		@font.draw(@info_first, 10, 10, 100, 1.0, 1.0, 0xffffffff)
+		@font.draw(@info_second, 10, 30, 100, 1.0, 1.0, 0xffffffff)
 	end
 
 	def start
@@ -98,27 +106,39 @@ class Game < Gosu::Window
 		when Gosu::KbEscape
       close
 		when Gosu::KbReturn
-    	case @config_state
-    	when 0 
-    		@info = "Put your marker in the right-most position and hit enter."
-    	when 1 
-    		@cam_right = @cam_x
-    		@info = "Put your marker in the left-most position and hit enter."
-    	when 2 
-    		@cam_left = @cam_x
-    		@info = "Put your marker in the top-most position and hit enter."
-    	when 3 
-    		@cam_top = @cam_y
-    		@info = "Put your marker in the bottom-most position and hit enter."
-    	when 4 
-    		@cam_bottom = @cam_y
-    		@info = ""
-    	end
-    	@config_state = (@config_state + 1) % 5
+			configure_cam
 		end
   end
 
 private
+
+	def configure_cam
+		case @config_state
+		when 0 
+			@info_first = "Put your marker in the right-most position and hit enter."
+		when 1 
+			@cam_right = @config.set :cam_right, @cam_x
+			@info_first = "Put your marker in the left-most position and hit enter."
+		when 2 
+			@cam_left = @config.set :cam_left, @cam_x
+			@info_first = "Put your marker in the top-most position and hit enter."
+		when 3 
+			@cam_top = @config.set :cam_top, @cam_y
+			@info_first = "Put your marker in the bottom-most position and hit enter."
+		when 4 
+			@cam_bottom = @config.set :cam_bottom, @cam_y
+			@info_first = ""
+
+			puts "Configuration"
+			puts "============="
+			puts "Right: #{@cam_right}"
+			puts "Left: #{@cam_left}"
+			puts "Top: #{@cam_top}"
+			puts "Bottom: #{@cam_bottom}"
+		end
+		@config_state = (@config_state + 1) % 5
+	end
+
 	def insideHome(paddle, from, to)
 		if paddle.pos.x.between?(from, to) && paddle.pos.y.between?(0, @HEIGHT)
 			paddle.activate
@@ -148,14 +168,16 @@ private
 			end
 
 			if paddle
-
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
 				paddle.warp(x, y)
 
-				#puts "Cam: #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-				#puts "Paddle #{to.fiducial_id}: x=#{x} y=#{y}"
+				unless @config_state == 0
+					@info_second = "(x=#{to.x_pos.round(2)} y=#{to.y_pos.round(2)})"
+				else
+					@info_second = ""
+				end
 
 				@cam_x = to.x_pos
 				@cam_y = to.y_pos
