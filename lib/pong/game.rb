@@ -23,8 +23,6 @@ class Game < Gosu::Window
 
 		super @WIDTH, @HEIGHT, false
 
-		initTracker
-
 		self.caption = "TableTop Pong"
 
 		# Time increment over which to apply a physics step
@@ -41,6 +39,8 @@ class Game < Gosu::Window
 
 		@player1 = Player.new("Daniel", @paddles[0])
 		@player2 = Player.new("Isak", @paddles[1])
+
+		initTracker
 	end
 
 	def update
@@ -48,8 +48,8 @@ class Game < Gosu::Window
 		@space.step(@dt)
 		@ball.move
 		#@paddles.each { |id, paddle| paddle.warp(mouse_x, mouse_y)}
-		@paddles[0].warp(mouse_x, mouse_y)
-		insideHome(@paddles[0], 0, @HOME_WIDTH)
+		# @paddles[0].warp(mouse_x, mouse_y)
+		# insideHome(@paddles[0], 0, @HOME_WIDTH)
 
 		#Check score
 		if @ball.p.x < 0
@@ -70,7 +70,7 @@ class Game < Gosu::Window
 	end
 
 	def start
-		#@tc.start
+		@tc.start
 		self.show
 	end
 
@@ -106,28 +106,31 @@ private
 	end
 
 	def initTracker
-	# 	@tc = TuioClient.new
+		@tc = TuioClient.new
 
-	# 	@tc.on_object_creation do | to |
-	# 		#@paddles[to.fiducial_id].activate
-	# 	end
+		@tc.on_object_creation do | to |
+		#	@paddles[to.fiducial_id].activate
+		end
 
-	# 	@tc.on_object_update do | to |
-	# 		paddle = @paddles[to.fiducial_id]
+		@tc.on_object_update do | to |
+			paddle = @paddles[to.fiducial_id]
 
-	# 		#if paddle == @player1.paddle
-	# 		#	insideHome(paddle, 0, @HOME_WIDTH)
-	# 		#else 
-	# 		#	insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
-	# 		#end
+			if paddle
+				if paddle == @player1.paddle
+					insideHome(paddle, 0, @HOME_WIDTH)
+				else 
+					insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
+				end
+				puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
+				paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) 
+			end
 
-	# 		puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-	# 		paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) if paddle
-	# 	end
 
-	# 	@tc.on_object_removal do | to |
-	# 		#@paddles[to.fiducial_id].deactivate
-	# 	end
+		end
+
+		@tc.on_object_removal do | to |
+			#@paddles[to.fiducial_id].deactivate
+		end
 	end
 
 	def convert_range(from_min, from_max, to_min, to_max)
