@@ -44,6 +44,8 @@ class Game < Gosu::Window
 
 		@config_state = 0
 
+		@isPaused = false
+
 		@info_first = ""
 		@info_second = ""
     @font = Gosu::Font.new(self, Gosu::default_font_name, 20)
@@ -59,8 +61,8 @@ class Game < Gosu::Window
 
 		@ball = Ball.new self
 
-		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
-								1 => RectangularPaddle.new(self).warp(-100, -100)}
+		@paddles = {2 => RectangularPaddle.new(self).warp(-100, -100),
+								3 => RectangularPaddle.new(self).warp(-100, -100)}
 
 		@player1 = Player.new("Daniel", @paddles[0])
 		@player2 = Player.new("Isak", @paddles[1])
@@ -92,6 +94,7 @@ class Game < Gosu::Window
 		# Draw GUI
 	end
 
+
 	def draw
 		@ball.draw
 		@paddles.each { |id, paddle| paddle.draw if paddle.active }
@@ -121,12 +124,18 @@ class Game < Gosu::Window
 		@tc.stop
 	end
 
+
+
+
 	def button_down(id)
 		case id
 		when Gosu::KbEscape
       close
 		when Gosu::KbReturn
+			@ball.stop 
 			configure_cam
+		when Gosu::KbSpace
+			@ball.toggleStop
 		end
   end
 
