@@ -196,15 +196,18 @@ private
 
 			if paddle
 				if paddle == @player1.paddle
-					insideHome paddle, 0, @HOME_WIDTH
+					insideHome(paddle, 0, @HOME_WIDTH) 
 				else 
-					insideHome paddle, @WIDTH - @HOME_WIDTH, @WIDTH
+					insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
 				end
 
+				puts "" # For perfomance **Do _not_ remove**
+				
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
 				paddle.warp(x, y)
+
 
 				unless @config_state == 0
 					@info_second = "(x=#{to.x_pos.round(2)} y=#{to.y_pos.round(2)})"
@@ -214,6 +217,7 @@ private
 				
 				@cam_x = to.x_pos
 				@cam_y = to.y_pos
+
 			end
 		end
 
