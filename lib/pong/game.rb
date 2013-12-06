@@ -53,8 +53,8 @@ class Game < Gosu::Window
 
 		@ball = Ball.new self
 
-		@paddles = {2 => RectangularPaddle.new(self).warp(-100, -100),
-								3 => RectangularPaddle.new(self).warp(-100, -100)}
+		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
+								1 => RectangularPaddle.new(self).warp(-100, -100)}
 
 		@player1 = Player.new("Daniel", @paddles[0])
 		@player2 = Player.new("Isak", @paddles[1])
@@ -89,7 +89,7 @@ class Game < Gosu::Window
 
 	def draw
 		@ball.draw
-		@paddles.each { |id, paddle| paddle.draw if paddle.active }
+		@paddles.each { |id, paddle| paddle.draw }
 		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
 		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
 		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
@@ -103,9 +103,6 @@ class Game < Gosu::Window
 	def stop
 		@tc.stop
 	end
-
-
-
 
 	def button_down(id)
 		case id
@@ -181,6 +178,8 @@ private
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
 				paddle.warp(x, y)
+
+				puts "Position: #{x}, #{y}"
 
 				unless @config_state == 0
 					@info_second = "(x=#{to.x_pos.round(2)} y=#{to.y_pos.round(2)})"
