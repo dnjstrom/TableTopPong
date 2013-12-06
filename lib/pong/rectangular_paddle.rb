@@ -2,8 +2,8 @@ module Pong
 class RectangularPaddle
   attr_reader :pos
 
-  @@WIDTH = 30
-  @@HEIGHT = 100
+  @@WIDTH = 200
+  @@HEIGHT = 200
 
   def initialize(window)
     @window = window
@@ -11,7 +11,7 @@ class RectangularPaddle
     @image_disabled = Gosu::Image.new(window, "media/img/rectangular_paddle-disabled.png", false)
 
     space = window.space
-    @active = false
+    @active = true
 
     @body = CP::Body.new(CP::INFINITY, CP::INFINITY)
     @body.object = self
@@ -19,12 +19,13 @@ class RectangularPaddle
     @body.v_limit = 0
 
     verts = [CP::Vec2.new(0,@@HEIGHT), CP::Vec2.new(@@WIDTH,@@HEIGHT),
-     CP::Vec2.new(@@WIDTH,0), CP::Vec2.new(0,0) ]
+    CP::Vec2.new(@@WIDTH,0), CP::Vec2.new(0,0) ]
 
-     CP::recenter_poly(verts)
+    CP::recenter_poly(verts)
 
-     @shape = CP::Shape::Poly.new(@body, verts, CP::Vec2.new(0,0))
-     @shape.layers = 2
+    @shape = CP::Shape::Poly.new(@body, verts, CP::Vec2.new(0,0))
+    @shape.layers = CP::ALL_LAYERS
+    
     @shape.u = 0.0 # friction coefficient
     @shape.e = 1.0 # elasticity
 
@@ -51,9 +52,9 @@ class RectangularPaddle
     @active
   end
 
-  def draw
+  def draw(visible = true)
     image = if @active then @image else @image_disabled end
-    image.draw_rot(@body.p.x, @body.p.y, 1, @body.a)
+    image.draw_rot(@body.p.x, @body.p.y, 1, @body.a) if visible
   end
 
   def warp(x, y)

@@ -9,7 +9,16 @@ require 'pong/game'
 # the command 'ruby pong.rb'.
 module Pong
 	def self.start
-		game = Game.new
+		options = {}
+
+		ARGV.each do|arg|
+			case arg
+			when '-f'
+				options[:fullscreen] = true
+			end
+		end		
+
+		game = Game.new options
 		game.start
 	end
 end

@@ -15,24 +15,26 @@ class Game < Gosu::Window
 	attr_reader :WIDTH, :HEIGHT, :HOME_WIDTH, :space
 
 
-	def initialize
+	def initialize(options = {})
 
     db = Database.new
     @main = db.connect :main
     @config = db.connect :config
 
-		@WIDTH = @config.get :window_width, 640
-		@HEIGHT = @config.get :window_height, 360
-		@HOME_WIDTH = @config.get :home_width, 150
+		@WIDTH = @config.get :window_width, 1024
+		@HEIGHT = @config.get :window_height, 768
+		@HOME_WIDTH = @config.get :home_width, @WIDTH / 4
 
 		@config_state = 0
 
-		@HOME_COLOR_GREEN = Gosu::Color.new(255,45,240,65)
-		@HOME_COLOR_RED = Gosu::Color.new(255,255,0,0)
+		#@HOME_COLOR_GREEN = Gosu::Color.new(255,45,240,65)
+		@HOME_COLOR_GREEN = Gosu::Color.new(255,0,0,0)
+		#@HOME_COLOR_RED = Gosu::Color.new(255,255,0,0)
+		@HOME_COLOR_RED = Gosu::Color.new(255,0,0,0)
 		@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
 		@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
 
-		super @WIDTH, @HEIGHT, false
+		super @WIDTH, @HEIGHT, options[:fullscreen]
 
 		#Initial cam configuration
 		@cam_left = @config.get :cam_left, 1
@@ -45,6 +47,7 @@ class Game < Gosu::Window
 		@config_state = 0
 
 		@isPaused = false
+		@visible_paddles = false
 
 		@info_first = ""
 		@info_second = ""
@@ -97,7 +100,7 @@ class Game < Gosu::Window
 	def draw
 		@ball.draw
 
-		@paddles.each { |id, paddle| paddle.draw }
+		@paddles.each { |id, paddle| paddle.draw @visible_paddles }
 
 
 		# Info text
@@ -143,6 +146,8 @@ class Game < Gosu::Window
 			configure_cam
 		when Gosu::KbSpace
 			@ball.toggleStop
+		when Gosu::KbD
+			@visible_paddles = !@visible_paddles
 		end
   end
 
@@ -187,20 +192,12 @@ private
 		@tc = TuioClient.new
 
 		@tc.on_object_creation do | to |
-			paddle = @paddles[to.fiducial_id]
-			paddle.activate if paddle
 		end
 
 		@tc.on_object_update do | to |
 			paddle = @paddles[to.fiducial_id]
 
 			if paddle
-				if paddle == @player1.paddle
-					insideHome(paddle, 0, @HOME_WIDTH) 
-				else 
-					insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
-				end
-
 				puts "" # For perfomance **Do _not_ remove**
 				
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
@@ -222,8 +219,6 @@ private
 		end
 
 		@tc.on_object_removal do | to |
-			paddle = @paddles[to.fiducial_id]
-			paddle.deactivate if paddle
 		end
 	end
 
