@@ -20,6 +20,10 @@ class Ball
 
     space.add_body(@body)
     space.add_shape(shape)
+
+    @v_backup = Vec2.new(0.0, 0.0)
+
+    @isPaused = false
 	end
 
 	def self.radius
@@ -43,6 +47,25 @@ class Ball
 		if @body.p.y > (@window.HEIGHT - @@radius)
 			@body.v.y = -@body.v.y.abs
 		end
+  end
+
+  def stop
+    @isPaused = true
+    @v_backup = Vec2.new(@body.v.x, @body.v.y)
+  	@body.v = Vec2.new(0.0, 0.0)
+  end
+
+  def play
+    @isPaused = false
+  	@body.v = @v_backup
+  end
+
+  def toggleStop
+  	if @isPaused
+      play
+  	else
+      stop
+  	end
   end
 
   def draw
