@@ -1,6 +1,6 @@
 module Pong
 class RectangularPaddle
-  attr_reader :active, :pos
+  attr_reader :pos
 
   @@WIDTH = 30
   @@HEIGHT = 100
@@ -35,8 +35,20 @@ class RectangularPaddle
     space.add_shape(@shape)
   end
 
+  def HEIGHT
+    @@HEIGHT
+  end
+
+  def WIDTH
+    @@WIDTH
+  end
+
   def pos
     @body.p
+  end
+
+  def active?
+    @active
   end
 
   def draw

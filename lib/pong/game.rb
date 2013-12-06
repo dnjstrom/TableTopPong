@@ -57,7 +57,6 @@ class Game < Gosu::Window
 
 		@space = CP::Space.new
     @space.gravity = Vec2.new(0.0, 0.0)
-    @text = Gosu::Font.new(self, Gosu::default_font_name, 20)
 
 		@ball = Ball.new self
 
@@ -97,21 +96,32 @@ class Game < Gosu::Window
 
 	def draw
 		@ball.draw
-		@paddles.each { |id, paddle| paddle.draw }
-		@text.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
 
+		@paddles.each { |id, paddle| paddle.draw }
+
+
+		# Info text
 		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
 		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
 
-		draw_quad(0, 0, @PLAYER1_CURRENT_COLOR, 
-							@HOME_WIDTH, 0, @PLAYER1_CURRENT_COLOR, 
-							0, @HEIGHT, @PLAYER1_CURRENT_COLOR, 
-							@HOME_WIDTH, @HEIGHT, @PLAYER1_CURRENT_COLOR,
+		# Score
+		@font.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
+
+
+		#Home player 1
+		home_color = if @player1.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
+		draw_quad(0, 0, home_color, 
+							@HOME_WIDTH, 0, home_color, 
+							0, @HEIGHT, home_color, 
+							@HOME_WIDTH, @HEIGHT, home_color,
 							0)
-		draw_quad(@WIDTH - @HOME_WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
-							@WIDTH, 0, @PLAYER2_CURRENT_COLOR, 
-							@WIDTH - @HOME_WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR, 
-							@WIDTH, @HEIGHT, @PLAYER2_CURRENT_COLOR,
+
+		#Home player 2
+		home_color = if @player2.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
+		draw_quad(@WIDTH - @HOME_WIDTH, 0, home_color, 
+							@WIDTH, 0, home_color, 
+							@WIDTH - @HOME_WIDTH, @HEIGHT, home_color, 
+							@WIDTH, @HEIGHT, home_color,
 							0)
 	end
 
@@ -166,13 +176,11 @@ private
 	end
 
 	def insideHome(paddle, from, to)
-		if paddle.pos.x.between?(from, to) && paddle.pos.y.between?(0, @HEIGHT)
+		if paddle.pos.x.between?(from, to) && paddle.pos.y.between?(0 - (paddle.HEIGHT / 2.0), @HEIGHT + (paddle.HEIGHT / 2.0))
 			paddle.activate
 		else
 			paddle.deactivate
 		end
-
-		paddle.active
 	end
 
 	def initTracker
@@ -188,27 +196,15 @@ private
 
 			if paddle
 				if paddle == @player1.paddle
-					if insideHome(paddle, 0, @HOME_WIDTH) 
-						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
-					else
-						@PLAYER1_CURRENT_COLOR = @HOME_COLOR_RED
-					end
+					insideHome paddle, 0, @HOME_WIDTH
 				else 
-					if insideHome(paddle, @WIDTH - @HOME_WIDTH, @WIDTH)
-						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
-					else
-						@PLAYER2_CURRENT_COLOR = @HOME_COLOR_RED
-					end
+					insideHome paddle, @WIDTH - @HOME_WIDTH, @WIDTH
 				end
-				puts "Paddle #{to.fiducial_id}: x=#{to.x_pos} y=#{to.y_pos}"
-				paddle.warp(to.x_pos * @WIDTH, to.y_pos * @HEIGHT) 
 
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
 				paddle.warp(x, y)
-
-				puts "Position: #{x}, #{y}"
 
 				unless @config_state == 0
 					@info_second = "(x=#{to.x_pos.round(2)} y=#{to.y_pos.round(2)})"
@@ -218,7 +214,6 @@ private
 				
 				@cam_x = to.x_pos
 				@cam_y = to.y_pos
-
 			end
 		end
 
