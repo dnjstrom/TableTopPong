@@ -60,6 +60,8 @@ class Game < Gosu::Window
 		@space = CP::Space.new
     @space.gravity = Vec2.new(0.0, 0.0)
 
+		@target = Gosu::Image.new(self, "media/img/target.png", false)
+
 		@ball = Ball.new self
 
 		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
@@ -138,6 +140,15 @@ class Game < Gosu::Window
 		# Score
 		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 1, 0.5, 0)
 
+		# Target for configuration
+
+		case @config_state
+		when 1
+			@target.draw_rot(@WIDTH / 4, (@HEIGHT / 4) * 3, 1, 0)
+		when 2
+			@target.draw_rot((@WIDTH / 4)*3, @HEIGHT / 4, 1, 0)
+		end
+
 		#Home player 1
 		#home_color = if @left_player.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
 		#draw_quad(0, 0, home_color, 
@@ -183,19 +194,15 @@ private
 	def configure_cam
 		case @config_state
 		when 0 
-			@info_first = "Put your marker in the right-most position and hit enter."
+			@info_first = "Position your marker over the dot."
 		when 1 
-			@cam_right = @config.set :cam_right, @cam_x
-			@info_first = "Put your marker in the left-most position and hit enter."
+			@a = Point.new @cam_x, @cam_y
+			@info_first = "Position your marker over the second dot."
 		when 2 
-			@cam_left = @config.set :cam_left, @cam_x
-			@info_first = "Put your marker in the top-most position and hit enter."
-		when 3 
-			@cam_top = @config.set :cam_top, @cam_y
-			@info_first = "Put your marker in the bottom-most position and hit enter."
-		when 4 
-			@cam_bottom = @config.set :cam_bottom, @cam_y
+			@b = Point.new @cam_x, @cam_y
 			@info_first = ""
+
+			calculate_bounds
 
 			puts "Configuration"
 			puts "============="
@@ -204,7 +211,24 @@ private
 			puts "Top: #{@cam_top}"
 			puts "Bottom: #{@cam_bottom}"
 		end
-		@config_state = (@config_state + 1) % 5
+
+		@config_state = (@config_state + 1) % 3
+	end
+
+	def calculate_bounds
+		a = Point.new @WIDTH / 4, (@HEIGHT / 4) * 3
+		b = Point.new (@WIDTH / 4) * 3, @HEIGHT / 4
+
+		kx = (@b.x * a.x - @a.x * b.x) / (@b.x - @a.x).to_f
+		x = (a.x - kx) / @a.x.to_f
+
+		ky = (@b.y * a.y - @a.y * b.y) / (@b.y - @a.y).to_f
+		y = (a.y - ky) / @a.y.to_f
+
+		@cam_left = @config.set :cam_left, (0-kx) / x.to_f
+		@cam_right = @config.set :cam_right, (@WIDTH-kx) / x.to_f
+		@cam_top = @config.set :cam_top, (0-ky) / y.to_f
+		@cam_bottom = @config.set :cam_bottom, (@HEIGHT-ky) / y.to_f
 	end
 
 	def insideHome(paddle, from, to)
@@ -252,6 +276,15 @@ private
 	def convert_range(value, from_min, from_max, to_min, to_max)
 		ratio = (value - from_min) / (from_max - from_min).to_f
 		to_min + (to_max - to_min) * ratio
+	end
+
+	class Point
+		attr_accessor :x, :y
+
+		def initialize(x, y)
+			@x = x
+			@y = y
+		end
 	end
 end
 end
