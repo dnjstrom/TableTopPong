@@ -9,13 +9,36 @@ require 'pong/game'
 # the command 'ruby pong.rb'.
 module Pong
 	def self.start
+		# default options
 		options = {}
 
+		option = nil
+		state = -1
+
 		ARGV.each do|arg|
-			case arg
+			option = arg unless option
+
+			case option
 			when '-f'
 				options[:fullscreen] = true
+				option = nil
+			when '-w'
+				if state == 0
+					options[:width] = arg.to_i
+					option = nil
+				else
+					state = 1
+				end
+			when '-h'
+				if state == 0
+					options[:height] = arg.to_i
+					option = nil
+				else
+					state = 1
+				end
 			end
+
+			state -= 1
 		end		
 
 		game = Game.new options

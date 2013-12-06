@@ -15,15 +15,16 @@ module Pong
 class Game < Gosu::Window
 	attr_reader :WIDTH, :HEIGHT, :HOME_WIDTH, :space
 
-
 	def initialize(options = {})
 
     db = Database.new
     @main = db.connect :main
     @config = db.connect :config
 
-		@WIDTH = @config.get :window_width, 1024
-		@HEIGHT = @config.get :window_height, 768
+    @WIDTH = get_config :width, 1024, options
+    @HEIGHT = get_config :height, 768, options
+    @HEIGHT = get_config :height, 768, options
+
 		@HOME_WIDTH = @config.get :home_width, @WIDTH / 4
 
 		@config_state = 0
@@ -35,7 +36,7 @@ class Game < Gosu::Window
 		@PLAYER1_CURRENT_COLOR = @HOME_COLOR_GREEN
 		@PLAYER2_CURRENT_COLOR = @HOME_COLOR_GREEN
 
-		super @WIDTH, @HEIGHT, options[:fullscreen]
+		super @WIDTH, @HEIGHT, get_config(:fullscreen, false, options)
 
 		#Initial cam configuration
 		@cam_left = @config.get :cam_left, 1
@@ -66,14 +67,44 @@ class Game < Gosu::Window
 								2 => CircularPaddle.new(self).warp(-100, -100),
 								3 => CircularPaddle.new(self).warp(-100, -100)}
 
-		@player1 = Player.new("Daniel", @paddles[2])
-		@player2 = Player.new("Isak", @paddles[3])
+		@left_player = Player.new("Left Player", @paddles[2])
+		@right_player = Player.new("Right", @paddles[3])
 
 		@paddle_last_moved = 0
 
 		initTracker
 		
     db = Database.new
+
+    direction = if rand(2) > 0 then 1 else -1 end
+    restart direction
+	end
+
+	def get_config(option, default, options)
+		if options[option]
+			options[option]
+		else
+			@config.get option, default
+		end
+	end
+
+	def restart(direction = 1)
+		@ball.reset(direction)
+		@ball.stop
+
+		x = Thread.new do
+			@info_first = "Ready"
+			sleep 1
+
+			@info_first = "Set"
+			sleep 1
+
+			@info_first = "Go!"
+			@ball.play
+			sleep 0.5
+
+			@info_first = ""
+		end
 	end
 
 	def update
@@ -81,13 +112,16 @@ class Game < Gosu::Window
 		@space.step(@dt)
 		@ball.move
 
+		# Move debugger paddle
+		#@paddles[2].warp(mouse_x, mouse_y)
+
 		#Check score
 		if @ball.p.x < 0
-			@player2.score += 1
-			@ball.reset(-1)
+			@right_player.score += 1
+			restart -1
 		elsif @ball.p.x > @WIDTH
-			@player1.score += 1
-			@ball.reset(1)
+			@left_player.score += 1
+			restart 1
 		end
 	end
 
@@ -102,23 +136,23 @@ class Game < Gosu::Window
 		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
 
 		# Score
-		@font.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
+		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 1, 0.5, 0)
 
 		#Home player 1
-		home_color = if @player1.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
-		draw_quad(0, 0, home_color, 
-							@HOME_WIDTH, 0, home_color, 
-							0, @HEIGHT, home_color, 
-							@HOME_WIDTH, @HEIGHT, home_color,
-							0)
+		#home_color = if @left_player.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
+		#draw_quad(0, 0, home_color, 
+		#					@HOME_WIDTH, 0, home_color, 
+		#					0, @HEIGHT, home_color, 
+		#					@HOME_WIDTH, @HEIGHT, home_color,
+		#					0)
 
 		#Home player 2
-		home_color = if @player2.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
-		draw_quad(@WIDTH - @HOME_WIDTH, 0, home_color, 
-							@WIDTH, 0, home_color, 
-							@WIDTH - @HOME_WIDTH, @HEIGHT, home_color, 
-							@WIDTH, @HEIGHT, home_color,
-							0)
+		#home_color = if @right_player.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
+		#draw_quad(@WIDTH - @HOME_WIDTH, 0, home_color, 
+		#					@WIDTH, 0, home_color, 
+		#					@WIDTH - @HOME_WIDTH, @HEIGHT, home_color, 
+		#					@WIDTH, @HEIGHT, home_color,
+		#					0)
 	end
 
 	def start
