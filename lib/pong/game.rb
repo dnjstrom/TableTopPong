@@ -179,7 +179,8 @@ private
 		@tc = TuioClient.new
 
 		@tc.on_object_creation do | to |
-			@paddles[to.fiducial_id].activate
+			paddle = @paddles[to.fiducial_id]
+			paddle.activate if paddle
 		end
 
 		@tc.on_object_update do | to |
@@ -222,8 +223,8 @@ private
 		end
 
 		@tc.on_object_removal do | to |
-			@paddles[to.fiducial_id].deactivate
-
+			paddle = @paddles[to.fiducial_id]
+			paddle.deactivate if paddle
 		end
 	end
 
