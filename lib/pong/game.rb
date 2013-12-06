@@ -1,6 +1,7 @@
 require 'pong/ball'
 require 'pong/player'
 require 'pong/rectangular_paddle'
+require 'pong/circular_paddle'
 require 'pong/database'
 
 require 'tuio-ruby'
@@ -43,11 +44,8 @@ class Game < Gosu::Window
 		@cam_bottom = @config.get :cam_bottom, 0
 
 		@cam_x = @cam_y = 0
-
 		@config_state = 0
-
-		@isPaused = false
-		@visible_paddles = false
+		@visible_paddles = true
 
 		@info_first = ""
 		@info_second = ""
@@ -64,10 +62,12 @@ class Game < Gosu::Window
 		@ball = Ball.new self
 
 		@paddles = {0 => RectangularPaddle.new(self).warp(-100, -100),
-								1 => RectangularPaddle.new(self).warp(-100, -100)}
+								1 => RectangularPaddle.new(self).warp(-100, -100),
+								2 => CircularPaddle.new(self).warp(-100, -100),
+								3 => CircularPaddle.new(self).warp(-100, -100)}
 
-		@player1 = Player.new("Daniel", @paddles[0])
-		@player2 = Player.new("Isak", @paddles[1])
+		@player1 = Player.new("Daniel", @paddles[2])
+		@player2 = Player.new("Isak", @paddles[3])
 
 		@paddle_last_moved = 0
 
@@ -80,9 +80,6 @@ class Game < Gosu::Window
 		# Move ball
 		@space.step(@dt)
 		@ball.move
-		#@paddles.each { |id, paddle| paddle.warp(mouse_x, mouse_y)}
-		# @paddles[0].warp(mouse_x, mouse_y)
-		# insideHome(@paddles[0], 0, @HOME_WIDTH)
 
 		#Check score
 		if @ball.p.x < 0
@@ -92,16 +89,13 @@ class Game < Gosu::Window
 			@player1.score += 1
 			@ball.reset(1)
 		end
-
-		# Draw GUI
 	end
 
 
 	def draw
 		@ball.draw
 
-		@paddles.each { |id, paddle| paddle.draw @visible_paddles }
-
+		@paddles.each { |id, paddle| paddle.draw }
 
 		# Info text
 		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
@@ -109,7 +103,6 @@ class Game < Gosu::Window
 
 		# Score
 		@font.draw_rel("#{@player1.score} - #{@player2.score}", @WIDTH/2, 5, 1, 0.5, 0)
-
 
 		#Home player 1
 		home_color = if @player1.paddle.active? then @HOME_COLOR_GREEN else @HOME_COLOR_RED end
@@ -182,9 +175,9 @@ private
 
 	def insideHome(paddle, from, to)
 		if paddle.pos.x.between?(from, to) && paddle.pos.y.between?(0 - (paddle.HEIGHT / 2.0), @HEIGHT + (paddle.HEIGHT / 2.0))
-			paddle.activate
+			paddle.active = true
 		else
-			paddle.deactivate
+			paddle.active = false
 		end
 	end
 
