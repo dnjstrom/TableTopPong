@@ -8,6 +8,7 @@ class RectangularPaddle
   def initialize(window)
     @window = window
     @image = Gosu::Image.new(window, "media/img/rectangular_paddle.png", false)
+    @image_disabled = Gosu::Image.new(window, "media/img/rectangular_paddle-disabled.png", false)
 
     space = window.space
     @active = false
@@ -39,7 +40,8 @@ class RectangularPaddle
   end
 
   def draw
-    @image.draw_rot(@body.p.x, @body.p.y, 1, @body.a)
+    image = if @active then @image else @image_disabled end
+    image.draw_rot(@body.p.x, @body.p.y, 1, @body.a)
   end
 
   def warp(x, y)
