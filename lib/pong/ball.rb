@@ -49,15 +49,23 @@ class Ball
 		end
   end
 
+  def paused?
+    @isPaused
+  end
+
   def stop
-    @isPaused = true
-    @v_backup = Vec2.new(@body.v.x, @body.v.y)
-  	@body.v = Vec2.new(0.0, 0.0)
+    unless @isPaused
+      @isPaused = true
+      @v_backup = Vec2.new(@body.v.x, @body.v.y)
+      @body.v = Vec2.new(0.0, 0.0)
+    end
   end
 
   def play
-    @isPaused = false
-  	@body.v = @v_backup
+    if @isPaused
+      @isPaused = false
+      @body.v = @v_backup
+    end
   end
 
   def toggleStop

@@ -50,7 +50,9 @@ class Game < Gosu::Window
 
 		@info_first = ""
 		@info_second = ""
-    @font = Gosu::Font.new(self, Gosu::default_font_name, 20)
+		@big_info = ""
+    @font = Gosu::Font.new(self, Gosu::default_font_name, 40)
+    @font_big = Gosu::Font.new(self, Gosu::default_font_name, 100)
 
 		self.caption = "TableTop Pong"
 
@@ -74,8 +76,10 @@ class Game < Gosu::Window
 
 		@paddle_last_moved = 0
 
+		@isStarting = true
+
 		initTracker
-		
+
     db = Database.new
 
     direction = if rand(2) > 0 then 1 else -1 end
@@ -91,21 +95,23 @@ class Game < Gosu::Window
 	end
 
 	def restart(direction = 1)
+		@isStarting = true
 		@ball.reset(direction)
 		@ball.stop
 
 		x = Thread.new do
-			@info_first = "Ready"
+			@big_info = "Ready"
 			sleep 1
 
-			@info_first = "Set"
+			@big_info = "Set"
 			sleep 1
 
-			@info_first = "Go!"
+			@big_info = "Go!"
 			@ball.play
+			@isStarting = false
 			sleep 0.5
 
-			@info_first = ""
+			@big_info = ""
 		end
 	end
 
@@ -136,9 +142,13 @@ class Game < Gosu::Window
 		# Info text
 		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
 		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
+		@font_big.draw_rel(@big_info, @WIDTH/2, 50, 100, 0.5, 0)
+
+		#Pause text
+		@font_big.draw_rel("Game Paused", @WIDTH/2, @HEIGHT/2, 100, 0.5, 0) if @ball.paused? && !@isStarting
 
 		# Score
-		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 1, 0.5, 0)
+		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 100, 0.5, 0)
 
 		# Target for configuration
 
@@ -178,12 +188,19 @@ class Game < Gosu::Window
 	def button_down(id)
 		case id
 		when Gosu::KbEscape
-      close
+			unless @config_state == 0
+				@info_first = ""
+				@config_state = 0
+			else
+				close
+			end
 		when Gosu::KbReturn
 			@ball.stop 
 			configure_cam
 		when Gosu::KbSpace
-			@ball.toggleStop
+			if @config_state == 0
+				@ball.toggleStop unless @isStarting
+			end
 		when Gosu::KbD
 			@visible_paddles = !@visible_paddles
 		end
@@ -225,10 +242,15 @@ private
 		ky = (@b.y * a.y - @a.y * b.y) / (@b.y - @a.y).to_f
 		y = (a.y - ky) / @a.y.to_f
 
-		@cam_left = @config.set :cam_left, (0-kx) / x.to_f
-		@cam_right = @config.set :cam_right, (@WIDTH-kx) / x.to_f
-		@cam_top = @config.set :cam_top, (0-ky) / y.to_f
-		@cam_bottom = @config.set :cam_bottom, (@HEIGHT-ky) / y.to_f
+		left = (0-kx) / x.to_f
+		right = (@WIDTH-kx) / x.to_f
+		top =  (0-ky) / y.to_f
+		bottom = (@HEIGHT-ky) / y.to_f
+
+		@cam_left = @config.set :cam_left, left unless left.nan?
+		@cam_right = @config.set :cam_right, right unless right.nan?
+		@cam_top = @config.set :cam_top, top unless top.nan?
+		@cam_bottom = @config.set :cam_bottom, bottom unless bottom.nan?
 	end
 
 	def insideHome(paddle, from, to)
