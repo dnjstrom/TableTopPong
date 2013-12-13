@@ -269,7 +269,7 @@ private
 
 			if paddle
 				#puts "#{obj.fiducial_id}: #{obj.x_pos}, #{obj.y_pos}" # For perfomance **Do _not_ remove**
-				sleep 0.0005
+				sleep 0.0015
 
 				x = convert_range obj.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range obj.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
