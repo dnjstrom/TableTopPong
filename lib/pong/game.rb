@@ -55,6 +55,7 @@ class Game < Gosu::Window
     @font_big = Gosu::Font.new(self, Gosu::default_font_name, 100)
 
 		self.caption = "TableTop Pong"
+		@background_image = Gosu::Image.new(self, "media/img/background.png", true)
 
 		# Time increment over which to apply a physics step
     @dt = (1.0/60.0)
@@ -135,20 +136,22 @@ class Game < Gosu::Window
 
 
 	def draw
+		@background_image.draw(0, 0, 0)
+
 		@ball.draw
 
 		@paddles.each { |id, paddle| paddle.draw }
 
 		# Info text
-		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xffffffff)
-		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xffffffff)
-		@font_big.draw_rel(@big_info, @WIDTH/2, 50, 100, 0.5, 0)
+		@font.draw(@info_first, 10, @HEIGHT-30, 100, 1.0, 1.0, 0xff000000)
+		@font.draw(@info_second, 10, @HEIGHT-50, 100, 1.0, 1.0, 0xff000000)
+		@font_big.draw_rel(@big_info, @WIDTH/2, 50, 100, 0.5, 0, 1, 1, 0xff000000)
 
 		#Pause text
-		@font_big.draw_rel("Game Paused", @WIDTH/2, @HEIGHT/2, 100, 0.5, 0) if @ball.paused? && !@isStarting
+		@font_big.draw_rel("Game Paused", @WIDTH/2, @HEIGHT/2, 100, 0.5, 0, 1, 1, 0xff000000) if @ball.paused? && !@isStarting
 
 		# Score
-		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 100, 0.5, 0)
+		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 100, 0.5, 0, 1, 1, 0xff000000)
 
 		# Target for configuration
 
@@ -271,8 +274,9 @@ private
 			paddle = @paddles[to.fiducial_id]
 
 			if paddle
-				puts "" # For perfomance **Do _not_ remove**
-				
+				#puts "#{to.fiducial_id}: #{to.x_pos}, #{to.y_pos}" # For perfomance **Do _not_ remove**
+				sleep 0.0005
+
 				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
 				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
