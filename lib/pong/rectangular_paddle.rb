@@ -5,11 +5,11 @@ class RectangularPaddle < Paddle
   def initialize(window)
     super window
 
-    @width = 200
-    @height = 200
+    @width = 150
+    @height = 150
 
     @image = Gosu::Image.new(window, "media/img/rectangular_paddle.png", false)
-    @image_disabled = Gosu::Image.new(window, "media/img/rectangular_paddle-disabled.png", false)
+    #@image_disabled = Gosu::Image.new(window, "media/img/rectangular_paddle-disabled.png", false)
 
     @body.object = self
 

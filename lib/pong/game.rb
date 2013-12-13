@@ -151,7 +151,7 @@ class Game < Gosu::Window
 		@font_big.draw_rel("Game Paused", @WIDTH/2, @HEIGHT/2, 100, 0.5, 0, 1, 1, 0xff000000) if @ball.paused? && !@isStarting
 
 		# Score
-		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 5, 100, 0.5, 0, 1, 1, 0xff000000)
+		@font.draw_rel("#{@left_player.score} - #{@right_player.score}", @WIDTH/2, 20, 100, 0.5, 0, 1, 1, 0xff000000)
 
 		# Target for configuration
 
@@ -264,38 +264,44 @@ private
 		end
 	end
 
-	def initTracker
-		@tc = TuioClient.new
-
-		@tc.on_object_creation do | to |
-		end
-
-		@tc.on_object_update do | to |
-			paddle = @paddles[to.fiducial_id]
+	def track(obj)
+			paddle = @paddles[obj.fiducial_id]
 
 			if paddle
-				#puts "#{to.fiducial_id}: #{to.x_pos}, #{to.y_pos}" # For perfomance **Do _not_ remove**
+				#puts "#{obj.fiducial_id}: #{obj.x_pos}, #{obj.y_pos}" # For perfomance **Do _not_ remove**
 				sleep 0.0005
 
-				x = convert_range to.x_pos, @cam_left, @cam_right, 0, @WIDTH
-				y = convert_range to.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
+				x = convert_range obj.x_pos, @cam_left, @cam_right, 0, @WIDTH
+				y = convert_range obj.y_pos, @cam_top, @cam_bottom, 0, @HEIGHT
 
 				paddle.warp(x, y)
 
 
 				unless @config_state == 0
-					@info_second = "(x=#{to.x_pos.round(2)} y=#{to.y_pos.round(2)})"
+					@info_second = "(x=#{obj.x_pos.round(2)} y=#{obj.y_pos.round(2)})"
 				else
 					@info_second = ""
 				end
 				
-				@cam_x = to.x_pos
-				@cam_y = to.y_pos
+				@cam_x = obj.x_pos
+				@cam_y = obj.y_pos
 
 			end
+	end
+
+	def initTracker
+		@tc = TuioClient.new
+
+		@tc.on_object_creation do | paddle |
+			track paddle
 		end
 
-		@tc.on_object_removal do | to |
+		@tc.on_object_update do | paddle |
+			track paddle
+		end
+
+		@tc.on_object_removal do | paddle |
+			track paddle
 		end
 	end
 

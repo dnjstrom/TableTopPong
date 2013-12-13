@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="200"
-   height="200"
+   width="150"
+   height="150"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -27,13 +27,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.6871094"
-     inkscape:cx="50.7878"
-     inkscape:cy="51.30008"
+     inkscape:zoom="1.4762464"
+     inkscape:cx="90.362833"
+     inkscape:cy="84.86025"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1317"
+     inkscape:window-width="975"
      inkscape:window-height="744"
      inkscape:window-x="49"
      inkscape:window-y="24"
@@ -54,16 +54,19 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-852.36218)">
+     transform="translate(0,-902.36218)">
     <path
        sodipodi:type="arc"
-       style="fill:#d5fff6;stroke:none"
+       style="fill:#c8fff6;fill-opacity:1;stroke:none"
        id="path3039"
        sodipodi:cx="82.579971"
        sodipodi:cy="81.307076"
        sodipodi:rx="80.559662"
        sodipodi:ry="77.276672"
        d="m 163.13963,81.307076 c 0,42.678724 -36.06779,77.276674 -80.559659,77.276674 -44.491872,0 -80.5596616,-34.59795 -80.5596616,-77.276674 0,-42.678728 36.0677896,-77.2766729 80.5596616,-77.2766729 44.491869,0 80.559659,34.5979449 80.559659,77.2766729 z"
-       transform="matrix(1.241316,0,0,1.2940516,-2.5078425,847.14663)" />
+       transform="matrix(0.93098703,0,0,0.97053869,-1.880882,898.45054)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       inkscape:export-filename="/storage/Chalmers/Tangible Interaction/pong/media/img/circular_paddle.png" />
   </g>
 </svg>

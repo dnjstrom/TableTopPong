@@ -5,8 +5,8 @@ class CircularPaddle < Paddle
   def initialize(window)
     super window
 
-    @width = 200
-    @height = 200
+    @width = 150
+    @height = 150
 
     @image = Gosu::Image.new(window, "media/img/circular_paddle.png", false)
 
