@@ -34,13 +34,13 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.8"
-     inkscape:cx="81.69447"
-     inkscape:cy="41.333642"
+     inkscape:zoom="3.3742188"
+     inkscape:cx="17.082552"
+     inkscape:cy="48.020895"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="975"
+     inkscape:window-width="1317"
      inkscape:window-height="744"
      inkscape:window-x="49"
      inkscape:window-y="24"
@@ -64,16 +64,28 @@
      transform="translate(0,-982.36218)">
     <path
        sodipodi:type="arc"
-       style="fill:#bfff00;fill-rule:evenodd;stroke:none;stroke-width:4.85437144000000043;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:#bfff00;fill-opacity:1;fill-rule:evenodd;stroke:none"
        id="path2985"
        sodipodi:cx="35"
        sodipodi:cy="35"
        sodipodi:rx="35"
        sodipodi:ry="35"
-       d="M 70,35 C 70,54.329966 54.329966,70 35,70 15.670034,70 0,54.329966 0,35 0,15.670034 15.670034,0 35,0 54.329966,0 70,15.670034 70,35 z"
-       transform="matrix(0.98591549,0,0,0.98591549,0.49295774,982.85514)"
+       d="M 70,35 A 35,35 0 1 1 0,35 35,35 0 1 1 70,35 z"
+       transform="translate(0,982.36218)"
        inkscape:export-filename="/storage/Chalmers/Tangible Interaction/pong/media/img/ball.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <path
+       style="fill:#e5ff80;fill-opacity:1;stroke:none"
+       d="m 38.274255,988.38814 c 14.85957,13.81746 16.1589,21.16656 16.150586,41.41996 17.562252,-19.7919 2.666015,-42.12121 -16.150586,-41.41996 z"
+       id="path3060-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       d="m 38.349778,990.5526 c 16.044352,9.24269 18.647022,15.413 22.596473,33.0996 7.163435,-21.5072 -5.242248,-34.61902 -22.596473,-33.0996 z"
+       id="path3060"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>
